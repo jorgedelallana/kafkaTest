@@ -43,12 +43,14 @@ public class Producer {
 
                 //System.out.println("Node "+ i);
                 //System.out.println(json.toString());
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>("fast-messages", json.toString());
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>("clients", json.toString());
                 //producer.send()
                 producer.send(record);
+                producer.flush();
+                System.out.println("Enviado "+ i);
             }
-        } catch (Throwable throwable) {
-            System.out.printf("%s", throwable.getStackTrace());
+        } catch (Exception throwable) {
+            System.out.println(throwable.getStackTrace());
         }
         System.out.println("Messages send");
     }
