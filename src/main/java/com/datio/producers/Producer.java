@@ -16,6 +16,7 @@ public class Producer {
     KafkaProducer<String, String> producer;
 
     public Producer(){
+
         try (InputStream props = Resources.getResource("producer.props").openStream()) {
             Properties properties = new Properties();
             properties.load(props);
@@ -33,7 +34,7 @@ public class Producer {
              */
             JSONObject json = new JSONObject();
 
-
+            System.out.println("Sending messages...");
             for (int i = 0; i < 1000000; i++) {
                 json.put("name", "name"+i);
                 json.put("surname", "surname"+i);
@@ -42,12 +43,14 @@ public class Producer {
 
                 //System.out.println("Node "+ i);
                 //System.out.println(json.toString());
-                //ProducerRecord<String, String> record = new ProducerRecord<String, String>("fast-messages", json.toString());
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>("fast-messages", json.toString());
                 //producer.send()
+                producer.send(record);
             }
         } catch (Throwable throwable) {
             System.out.printf("%s", throwable.getStackTrace());
         }
+        System.out.println("Messages send");
     }
 
     public void close(){
