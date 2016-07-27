@@ -4,6 +4,7 @@ package main.java.com.datio.producers;
 import com.google.common.io.Resources;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -13,21 +14,20 @@ import java.util.Properties;
  * Created by jorge on 27/07/16.
  */
 public class Producer {
-    KafkaProducer<String, String> producer;
+
 
     public Producer(){
 
-        try (InputStream props = Resources.getResource("producer.props").openStream()) {
-            Properties properties = new Properties();
-            properties.load(props);
-            producer = new KafkaProducer<>(properties);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
     }
 
     public void produce(){
         try {
+            KafkaProducer<String, String> producer;
+            try (InputStream props = Resources.getResource("producer.props").openStream()) {
+                Properties properties = new Properties();
+                properties.load(props);
+                producer = new KafkaProducer<>(properties);
+            }
             /*
                 topic: client
                 fields = name, surname, age, office
@@ -43,20 +43,26 @@ public class Producer {
 
                 //System.out.println("Node "+ i);
                 //System.out.println(json.toString());
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>("clients", json.toString());
-                //producer.send()
-                producer.send(record);
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>("clients", json.toString(), json.toString());
+                /*producer.send(new ProducerRecord<String, String>(
+                        "fast-messages",
+                        String.format("{\"type\":\"test\", \"t\":%.3f, \"k\":%d}", System.nanoTime() * 1e-9, i)));*/
+                RecordMetadata metadata = producer.send(record).get();
                 producer.flush();
+
                 System.out.println("Enviado "+ i);
+                Thread.sleep(20);
+
             }
+            producer.close();
         } catch (Exception throwable) {
-            System.out.println(throwable.getStackTrace());
+            throwable.printStackTrace();
         }
         System.out.println("Messages send");
     }
 
     public void close(){
-       producer.close();
+
     }
 
 }

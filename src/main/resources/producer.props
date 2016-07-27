@@ -1,5 +1,5 @@
 bootstrap.servers=localhost:9092
-broker.list=0:localhost:9092
+#broker.list=0:localhost:9092
 #bootstrap.servers=localhost:2181
 acks=all
 retries=0
@@ -9,3 +9,5 @@ linger.ms=0
 key.serializer=org.apache.kafka.common.serialization.StringSerializer
 value.serializer=org.apache.kafka.common.serialization.StringSerializer
 block.on.buffer.full=true
+max.block.ms=10000
+buffer.memory=102400
